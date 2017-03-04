@@ -96,7 +96,6 @@ class Node extends React.Component {
 
     constructor() {
         super();
-        this.handleClick = this.handleClick.bind(this);
     }
 
     componentDidMount() {
@@ -106,9 +105,9 @@ class Node extends React.Component {
             throw 'The prop `name` must be specified as a unique string.';
         }
         if (typeof rule === 'object' && rule !== null) {
-            strict = rule.strict || strict;
-            deps = rule.deps || deps;
-            test = rule.test || test;
+            strict = !strict && rule.strict || strict;
+            deps = !deps.length && rule.deps || deps;
+            test = !test && rule.test || test;
         }
         actions.addNode({ name, strict, deps, test, active: false });
     }
@@ -118,33 +117,29 @@ class Node extends React.Component {
         actions.removeNode(name);
     }
 
-    handleClick() {
-        let { actions, name } = this.props;
-        //actions.removeNode(name);
-    }
-
     render() {
+        if (!this.props.active) {
+            return null;
+        }
         return (
-            <div onClick={this.handleClick}>
-                {this.props.active
-                    ? this.props.children
-                    : null}
+            <div>
+                {this.props.children}
             </div>
         );
     }
 }
 
-Node.propTypes = {
-    name: React.PropTypes.string.isRequired,
-    rule: React.PropTypes.shape({
-        strict: React.PropTypes.bool,
-        deps: React.PropTypes.array,
-        test: React.PropTypes.func
-    }),
+const ruleObject = {
     strict: React.PropTypes.bool,
     deps: React.PropTypes.array,
     test: React.PropTypes.func
-};
+}
+
+Node.propTypes = Object.assign({
+    name: React.PropTypes.string.isRequired,
+    rule: React.PropTypes.shape(ruleObject)
+}, ruleObject);
+
 Node.defaultProps  = {
     rule: null,
     test: null,
@@ -167,7 +162,7 @@ const mapDispatchToProps = (dispatch) => {
             removeNode: (name) => dispatch({
                 type: 'REMOVE_NODE',
                 name
-            }),
+            })/*,
             activateNode: (name) => dispatch({
                 type: 'ACTIVATE_NODE',
                 name
@@ -175,7 +170,7 @@ const mapDispatchToProps = (dispatch) => {
             deactivateNode: (name) => dispatch({
                 type: 'DEACTIVATE_NODE',
                 name
-            })
+            })*/
         }
     }
 }

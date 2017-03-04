@@ -1,10 +1,13 @@
 import { combineReducers } from 'redux';
 import { nodeReducer } from '../components/Node';
 
-function input(state = {}, action) {
-    if (action.type === 'SET_VALUE') {
+const inputInitial = {
+    value: ''
+}
+
+function input(state = inputInitial, action) {
+    if (action.type === 'SET_VALUE')
         state.value = action.value;
-    }
     return state;
 }
 
