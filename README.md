@@ -4,6 +4,18 @@ Split interface into multiple nodes and define dependencies between them and app
 
 ## Usage
 
+First of all combine `nodeReducer` with rest of application reducers to manage node's state.
+
+```
+import { combineReducers } from 'redux'
+import Node, { nodeReducer } from './Node'
+
+const reducers = combineReducers({
+    nodes: nodeReducer,
+    ...
+})
+```
+
 The `name` is required string value, unique for all nodes. Rest properties are optional.
 
 ```
