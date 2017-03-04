@@ -7,15 +7,15 @@ Split interface into multiple nodes and define dependencies between them and app
 The `name` is required string value, unique for all nodes. Rest properties are optional.
 
 ```
-<Node name='string' [optional properties]>...</Node>
+<Node name='string' [optional props]>...</Node>
 ```
 
-#### Optional properties:
+#### Optional props:
 
 - `test [Function]` calls when state is changing. Should return `boolean` to activate (or not) node.
 - `deps [Array]` contains `names` of other nodes. Node is active when its dependencies are.
 - `strict [Boolean]` when is `true` all its dependencies must be active. Default is `false`.
-- `rule [Object]` may contains all properties.
+- `rule [Object]` may contains all props above.
 
 ## Examples
 
