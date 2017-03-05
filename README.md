@@ -4,21 +4,23 @@ Split interface into multiple nodes and define dependencies between them and app
 
 ## Usage
 
-First of all combine `nodeReducer` with rest of application reducers to manage node's state. And then use `resolveRules` as a middleware.
+First combine `nodeReducer` with other reducers to manage node's state. And then use `resolveRules` as a middleware when creating a store.
 
 ```
-import { combineReducers } from 'redux'
-import Node, { nodeReducer, resolveRules } from './Node'
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import Node, { nodeReducer, resolveRules } from './Node';
 
 const reducers = combineReducers({
     nodes: nodeReducer,
     ...
-})
-
-const store = createStore(reducers, {}, applyMiddleware(resolveRules)
+});
+const store = createStore(
+    reducers, {},
+    applyMiddleware(resolveRules)
+);
 ```
 
-The `name` is required string value, unique for all nodes. Rest props are optional.
+The `name` is required string value, unique for all nodes. The rest of props are optional.
 
 ```
 <Node name='string' [optional props]>...</Node>
