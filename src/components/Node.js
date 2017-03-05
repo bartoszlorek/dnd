@@ -2,6 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import 'babel-polyfill';
 
+function isEmpty(obj) {
+    if (obj == null) return true;
+    if (Object.keys(obj).length === 0)
+        return true;
+    return false;
+}
+
 export function nodeReducer(state = [], action) {
     switch (action.type) {
         case 'ADD_NODE':
@@ -34,66 +41,86 @@ export function nodeReducer(state = [], action) {
     return state;
 }
 
+export function getNodeActiveState(state) {
+    let nodes = state && state.nodes,
+        nodesLength,
+        nodesActive = {};
+
+    if (typeof nodes === 'undefined')
+        return nodesActive;
+    nodesLength = nodes.length;
+
+    // first resolve tests
+    for (let i=0; i<nodesLength; i++) {
+        let { name, test } = nodes[i];
+
+        nodesActive[name] =
+              typeof test === 'function'
+            ? test(state) === true
+            : false;
+    }
+
+    // then check dependencies
+    for (let i=0; i<nodesLength; i++) {
+        let { name, deps, strict } = nodes[i],
+            required = deps && deps.length || 0,
+            success = 0;
+
+        if (nodesActive[name] || required === 0) {
+            continue;
+        }
+        for (let j = 0; j < required; j++) {
+            if (nodesActive[deps[j]] === true) {
+                success++;
+            }
+        }
+        if (strict && success === required
+        || !strict && success > 0) {
+            nodesActive[name] = true;
+        }
+    }
+
+    // pass null when change isn't necessary
+    for (let i=0; i<nodesLength; i++) {
+        let { name, active } = nodes[i];
+        if (nodesActive[name] === active) {
+            nodesActive[name] = null;
+        }
+    }
+
+    return nodesActive;
+}
+
 export function resolveRules({ getState, dispatch }) {
     return (next) => (action) => {
-        let state = next(action),
-            nodes,
-            nodesLength,
-            activeState = {};
+        let result = next(action),
+            state = getState(),
+            nodes;
+
+        if (isEmpty(state)) {
+            return result;
+        }
 
         // don't resolve own actions (infinity loop)
         if (action.type === 'ACTIVATE_NODE'
         ||  action.type === 'DEACTIVATE_NODE') {
-            return state;
+            return result;
         }
 
-        nodes = getState().nodes;
-        if (typeof nodes === 'undefined')
-            throw "combine nodeReducer under 'nodes' key";
-        nodesLength = nodes.length;
-
-        // first resolve tests
-        for (let i=0; i<nodesLength; i++) {
-            let { name, test } = nodes[i];
-            activeState[name] = typeof test === 'function'
-                ? test(getState()) === true : false;
-        }
-
-        // then check dependencies
-        for (let i=0; i<nodesLength; i++) {
-            let { name, deps, strict } = nodes[i],
-                required = deps.length,
-                success = 0;
-
-            if (activeState[name] || required === 0) {
-                continue;
-            }
-            for (let j=0; j<required; j++) {
-                if (activeState[deps[j]] === true) {
-                    success ++;
-                }
-            }
-            if (strict && success === required
-            || !strict && success > 0) {
-                activeState[name] = true;
-            }
-        }
-
-        // and dispatch changes
-        for (let i=0; i<nodesLength; i++) {
-            let { name, active } = nodes[i];
-
-            if (active === activeState[name]) {
+        nodes = getNodeActiveState(state);
+        for (let name in nodes) {
+            if (nodes[name] === null) {
                 continue;
             }
             dispatch({
-                type: !active
+                type: nodes[name]
                     ? 'ACTIVATE_NODE'
                     : 'DEACTIVATE_NODE',
                 name
             })
         }
-        return state;
+
+        return result;
     }
 }
 
