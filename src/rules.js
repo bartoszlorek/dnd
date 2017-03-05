@@ -1,18 +1,14 @@
 export default {
     'dog': {
+        test: (state) => state.input.value === 'xxx',
         strict: true,
-        test: function (state) {
-            return state.input.value === 'xxx';
-        }
     },
     'cat': {
         deps: ['dog', 'wrong'],
-        test: function (state) {
-            return state.input.value === 'xxxx';
-        }
+        test: (state) => state.input.value === 'xxxx'
     },
     'parrot': {
-        test: function (state) {
+        test: (state) => {
             let value = state.input.value.length;
             return value > 5 && value < 10;
         }

@@ -8,7 +8,7 @@ export function nodeReducer(state = [], action) {
             let name = action.node.name,
                 node = state.find(node => node.name === name);
             if (typeof node !== 'undefined')
-                throw `Node with given name '${name}' already exists!`;
+                throw `Node with given name '${name}' already exists`;
             return [...state, action.node];
 
         case 'REMOVE_NODE':
@@ -37,8 +37,8 @@ export function nodeReducer(state = [], action) {
 export function resolveRules({ getState, dispatch }) {
     return (next) => (action) => {
         let state = next(action),
-            nodes = getState().nodes,
-            nodesLength = nodes.length,
+            nodes,
+            nodesLength,
             activeState = {};
 
         // don't resolve own actions (infinity loop)
@@ -46,6 +46,11 @@ export function resolveRules({ getState, dispatch }) {
         ||  action.type === 'DEACTIVATE_NODE') {
             return state;
         }
+
+        nodes = getState().nodes;
+        if (typeof nodes === 'undefined')
+            throw "combine nodeReducer under 'nodes' key";
+        nodesLength = nodes.length;
 
         // first resolve tests
         for (let i=0; i<nodesLength; i++) {
@@ -94,20 +99,17 @@ export function resolveRules({ getState, dispatch }) {
 
 class Node extends React.Component {
 
-    constructor() {
-        super();
-    }
-
     componentDidMount() {
-        let { actions, name, rule, strict, deps, test } = this.props;
+        let { actions, name, rule, strict, deps, test } = this.props,
+            defs = Node.defaultProps;
 
         if (name === '') {
-            throw 'The prop `name` must be specified as a unique string.';
+            throw "the prop 'name' must be specified as a unique string";
         }
         if (typeof rule === 'object' && rule !== null) {
-            strict = !strict && rule.strict || strict;
-            deps = !deps.length && rule.deps || deps;
-            test = !test && rule.test || test;
+            strict = defs.strict === strict && rule.strict || strict;
+            deps = defs.deps === deps && rule.deps || deps;
+            test = defs.test === test && rule.test || test;
         }
         actions.addNode({ name, strict, deps, test, active: false });
     }
@@ -134,20 +136,21 @@ const ruleObject = {
     deps: React.PropTypes.array,
     test: React.PropTypes.func
 }
-
 Node.propTypes = Object.assign({
     name: React.PropTypes.string.isRequired,
     rule: React.PropTypes.shape(ruleObject)
 }, ruleObject);
 
-Node.defaultProps  = {
+Node.defaultProps = {
     rule: null,
     test: null,
     strict: false,
     deps: []
-};
-
+}
 const mapStateToProps = (state, ownProps) => {
+    if (typeof state.nodes === 'undefined') {
+        throw "combine nodeReducer under 'nodes' key";
+    }
     let node = state.nodes.find(node =>
         node.name === ownProps.name);
     return { active: node && node.active }
@@ -162,15 +165,7 @@ const mapDispatchToProps = (dispatch) => {
             removeNode: (name) => dispatch({
                 type: 'REMOVE_NODE',
                 name
-            })/*,
-            activateNode: (name) => dispatch({
-                type: 'ACTIVATE_NODE',
-                name
-            }),
-            deactivateNode: (name) => dispatch({
-                type: 'DEACTIVATE_NODE',
-                name
-            })*/
+            })
         }
     }
 }

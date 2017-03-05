@@ -4,19 +4,21 @@ Split interface into multiple nodes and define dependencies between them and app
 
 ## Usage
 
-First of all combine `nodeReducer` with rest of application reducers to manage node's state.
+First of all combine `nodeReducer` with rest of application reducers to manage node's state. And then use `resolveRules` as a middleware.
 
 ```
 import { combineReducers } from 'redux'
-import Node, { nodeReducer } from './Node'
+import Node, { nodeReducer, resolveRules } from './Node'
 
 const reducers = combineReducers({
     nodes: nodeReducer,
     ...
 })
+
+const store = createStore(reducers, {}, applyMiddleware(resolveRules)
 ```
 
-The `name` is required string value, unique for all nodes. Rest properties are optional.
+The `name` is required string value, unique for all nodes. Rest props are optional.
 
 ```
 <Node name='string' [optional props]>...</Node>
@@ -26,7 +28,7 @@ The `name` is required string value, unique for all nodes. Rest properties are o
 
 - `test [Function]` calls when state is changing. Should return `boolean` to activate (or not) node.
 - `deps [Array]` contains `names` of other nodes. Node is active when its dependencies are.
-- `strict [Boolean]` when is `true` all its dependencies must be active. Default is `false`.
+- `strict [Boolean]` when is `true` all dependencies must be active. Default is `false`.
 - `rule [Object]` may contains all props above.
 
 ## Examples
@@ -58,7 +60,7 @@ const rule = {
 </Node>
 ```
 
-Nodes can be wrapped with `NodeProvider` to pass multiple rules with only one property.
+Nodes can be wrapped with `NodeProvider` to pass multiple `rules` with only one property.
 
 ```
 const rules = {
