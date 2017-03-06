@@ -8,7 +8,7 @@ First combine `nodeReducer` with other reducers to manage node's state. And then
 
 ```
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import Node, { nodeReducer, resolveRules } from './Node';
+import Node, { nodeReducer, resolveRules } from './and.min.js';
 
 const reducers = combineReducers({
     nodes: nodeReducer,
@@ -65,6 +65,8 @@ const rule = {
 Nodes can be wrapped with `NodeProvider` to pass multiple `rules` with only one property.
 
 ```
+import { NodeProvider } from './and.min.js';
+
 const rules = {
     'form1': {
         test: (state) => state.input.value > 10,
