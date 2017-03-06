@@ -1,5 +1,5 @@
 import { createStore, applyMiddleware } from 'redux';
-import { resolveRules } from '../components/Node';
+import resolveRules from '../lib/resolveRules';
 import createLogger from 'redux-logger';
 import reducers from './reducers';
 

@@ -16,10 +16,10 @@ class NodeProvider extends React.Component {
 
 NodeProvider.propTypes = {
     rules: React.PropTypes.object
-};
+}
 
 NodeProvider.defaultProps  = {
     rules: null
-};
+}
 
 export default NodeProvider;

@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { nodeReducer } from '../components/Node';
+import nodeReducer from '../lib/nodeReducer';
 
 const inputInitial = {
     value: ''

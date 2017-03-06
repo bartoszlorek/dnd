@@ -3,14 +3,14 @@ var path = require('path');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
-    entry: [
-        'babel-polyfill',
-        './src/index.js'
-    ],
+    entry: './src/lib/exporter.js',
     output: {
         path: path.join(__dirname, 'dist'),
-        filename: 'bundle.js',
+        filename: 'and.min.js',
+        library: 'and',
+        libraryTarget: 'umd'
     },
+    externals: ['react', 'react-redux', 'redux'],
     module: {
         loaders: [
             {
@@ -45,6 +45,7 @@ module.exports = {
         new ExtractTextPlugin({
             filename: 'style.css',
             allChunks: true
-        })
+        }),
+        new webpack.BannerPlugin('Copyright (c) 2017 Bartosz Lorek. MIT license')
     ]
 }

@@ -1,4 +1,6 @@
-import { nodeReducer, resolveRules, getNodeActiveState } from '../src/components/Node';
+import nodeReducer from '../src/components/Node/nodeReducer';
+import resolveRules from '../src/components/Node/resolveRules';
+import getActiveState from '../src/components/Node/getActiveState';
 
 describe('nodeReducer', () => {
 
@@ -66,11 +68,11 @@ describe('nodeReducer', () => {
 });
 
 
-describe('getNodeActiveState', () => {
+describe('getActiveState', () => {
 
     it('should handle empty store', () => {
         expect(
-            getNodeActiveState({})
+            getActiveState({})
         ).toEqual({})
     })
 
@@ -82,7 +84,7 @@ describe('getNodeActiveState', () => {
             ]
         }
         expect(
-            getNodeActiveState(fakeStore)
+            getActiveState(fakeStore)
         ).toEqual({
             'dog': false,
             'cat': false
@@ -97,7 +99,7 @@ describe('getNodeActiveState', () => {
             ]
         }
         expect(
-            getNodeActiveState(fakeStore)
+            getActiveState(fakeStore)
         ).toEqual({
             'dog': true,
             'cat': false
@@ -112,7 +114,7 @@ describe('getNodeActiveState', () => {
             ]
         }
         expect(
-            getNodeActiveState(fakeStore)
+            getActiveState(fakeStore)
         ).toEqual({
             'dog': true,
             'cat': true
@@ -127,7 +129,7 @@ describe('getNodeActiveState', () => {
             ]
         }
         expect(
-            getNodeActiveState(fakeStore)
+            getActiveState(fakeStore)
         ).toEqual({
             'dog': null,
             'cat': true

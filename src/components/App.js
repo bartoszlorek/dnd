@@ -1,9 +1,11 @@
 import React from 'react'
-import Node from './Node';
-import NodeProvider from './NodeProvider';
 import Input from './Input';
 
+import Node from '../lib/Node';
+import NodeProvider from '../lib/NodeProvider';
 import rules from '../rules';
+
+//import Node, { NodeProvider } from '../../dist/and.min.js';
 
 class App extends React.Component {
 
