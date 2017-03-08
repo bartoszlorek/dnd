@@ -6,8 +6,8 @@ module.exports = {
     entry: './src/lib/exporter.js',
     output: {
         path: path.join(__dirname, 'dist'),
-        filename: 'and.min.js',
-        library: 'and',
+        filename: 'dnd.min.js',
+        library: 'dnd',
         libraryTarget: 'umd'
     },
     externals: ['react', 'react-redux', 'redux'],

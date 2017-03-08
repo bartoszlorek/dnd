@@ -5,7 +5,7 @@ import Node from '../lib/Node';
 import NodeProvider from '../lib/NodeProvider';
 import rules from '../rules';
 
-//import Node, { NodeProvider } from '../../dist/and.min.js';
+//import Node, { NodeProvider } from '../../dist/dnd.min.js';
 
 class App extends React.Component {
 

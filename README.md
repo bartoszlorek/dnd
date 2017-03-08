@@ -1,4 +1,4 @@
-# Asynchronous Node Definition (AND)
+# Dependent Nodes Definition (DND)
 
 Split interface into multiple nodes and define dependencies between them and application state.
 
