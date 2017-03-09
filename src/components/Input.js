@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import style from './Input.css';
 
 class Input extends React.Component {
 
@@ -26,19 +27,23 @@ class Input extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className={style.container}>
+                <div className={style.panel}>
+                    <p className={style.title}>write this below: <i>"fox jumps over the lazy dog"</i></p>
+                    <label className={style.checkbox}>
+                        {' 1s delay'}
+                        <input
+                            type='checkbox'
+                            onChange={this.handleCheck}
+                        />
+                    </label>
+                </div>
                 <input
                     type='text'
+                    className={style.input}
                     value={this.props.value}
                     onChange={this.handleInput}
                 />
-                <label>
-                    <input
-                        type='checkbox'
-                        onChange={this.handleCheck}
-                    />
-                    {' delayed'}
-                </label>
             </div>
         );
     }

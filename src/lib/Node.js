@@ -27,9 +27,7 @@ class Node extends React.Component {
             return null;
         }
         return (
-            <div>
-                {this.props.children}
-            </div>
+            <div>{this.props.children}</div>
         );
     }
 }

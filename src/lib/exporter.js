@@ -1,11 +1,11 @@
 import Node from './Node';
-import NodeProvider from './NodeProvider';
+import createNodes from './createNodes';
 import nodeReducer from './nodeReducer';
 import resolveRules from './resolveRules';
 
 export {
     Node,
-    NodeProvider,
+    createNodes,
     nodeReducer,
     resolveRules
 }

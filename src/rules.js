@@ -1,16 +1,29 @@
+const sentence = 'fox jumps over the lazy dog';
+
 export default {
-    'dog': {
-        test: (state) => state.input.value === 'xxx',
-        strict: true,
+    'node1': {
+        test: (state) => state.input.value.slice(0, 3) === 'fox'
     },
-    'cat': {
-        deps: ['dog', 'wrong'],
-        test: (state) => state.input.value === 'xxxx'
+    'node2': {
+        test: (state) => state.input.value.indexOf('jump') !== -1
     },
-    'parrot': {
+    'node3': {
+        deps: ['node2']
+    },
+    'node4': {
+        test: (state) => state.input.value.length >= 23
+    },
+    'node5': {
+        test: (state) => state.input.value.indexOf('dog') !== -1
+    },
+    'node6': {
+        test: (state) => state.input.value === sentence
+    },
+    'node7': {
         test: (state) => {
-            let value = state.input.value.length;
-            return value > 5 && value < 10;
+            let length = state.input.value.length;
+            return state.input.value.slice(0, length)
+                !== sentence.slice(0, length);
         }
     }
 }
