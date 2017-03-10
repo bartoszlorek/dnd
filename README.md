@@ -2,13 +2,13 @@
 
 Split interface into multiple nodes and define dependencies between them and application state.
 
-## Usage
+## Initialization
 
-First combine `nodeReducer` with other reducers to manage node's state. And then use `resolveRules` as a middleware when creating a store.
+Combine `nodeReducer` with other reducers to manage node's state. And then use `resolveRules` as a middleware.
 
 ```
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import Node, { nodeReducer, resolveRules } from './and.min.js';
+import { nodeReducer, resolveRules } from './and.min.js';
 
 const reducers = combineReducers({
     nodes: nodeReducer,
@@ -20,22 +20,24 @@ const store = createStore(
 );
 ```
 
-The `name` is required string value, unique for all nodes. The rest of props are optional.
+## Basic Usage
+
+The `name` is required string value, unique for each node in app.
 
 ```
+import Node from './and.min.js';
+
 <Node name='string' [optional props]>...</Node>
 ```
 
-#### Optional props:
+#### Optional props
 
-- `test [Function]` calls when state is changing. Should return `boolean` to activate (or not) node.
+- `test [Function]` gets latest `state` as a first argument and should return `boolean` to activate (or deactivate) node. It's important to **not mutate** the state.
 - `deps [Array]` contains `names` of other nodes. Node is active when its dependencies are.
 - `strict [Boolean]` when is `true` all dependencies must be active. Default is `false`.
 - `rule [Object]` may contains all props above.
 
-## Examples
-
-Notice that test gets latest state of application as first argument. It's important to not mutate the state.
+**Rules** are handy in complex node cases. On the other hand, passing only `deps` is similar to have dumb node which just watching others.
 
 ```
 <Node
@@ -62,23 +64,33 @@ const rule = {
 </Node>
 ```
 
-Nodes can be wrapped with `NodeProvider` to pass multiple `rules` with only one property.
+## Complex Usage
+
+In case when multiple nodes are present, it's good practice to use one object combining all rules. That's why you should use `createNodes` function. It's return a Node component with rules scope received by name.
 
 ```
-import { NodeProvider } from './and.min.js';
+import { createNodes } from './and.min.js';
 
 const rules = {
     'form1': {
-        test: (state) => state.input.value > 10,
-        deps: ['form2'],
-        strict: true
+        test: (state) => state.input.value === 5
     },
     'form2': {
-        test: (state) => state.input.value === 5
+        test: (state) => state.input.value > 10,
+        deps: ['form1']
+    },
+    'side1': {
+        deps: ['form1', 'form2'],
+        strict: true
     }
 }
-<NodeProvider rules={rules}>
+const Node = createNodes(rules);
+
+<div class='main'>
     <Node name='form1'>...</Node>
     <Node name='form2'>...</Node>
-</NodeProvider>
+</div>
+<div class='sidebar'>
+    <Node name='side1'>...</Node>
+</div>
 ```
